@@ -9,11 +9,14 @@ You should treat this like a real-world job assignment with your instructor as t
 
 With the adventure game built in previous weeks, you have already created an application containing some of these elements (rooms, descriptions, objects, players, etc.). In this project, we will be expanding these worlds to be more interactive, provide new actions for players, display world info on a professional client site, and run the world's server on a hosted site to allow multi-player functionality.
 
-## Roles
+## Deliverables
 
-Each team must have a minimum of one Backend and one Frontend developer. The responsibilities will be as follows:
+Each team is responsible for building and deploying a functional MUD server, migrating a unique world onto that server, and creating a visualization and navigation client interface. We provide starter Django code with much of the server functionality implemented.
 
-### Backend
+
+
+
+### Server
 
 #### 1. Learn Django
 
@@ -26,19 +29,26 @@ You may find these resources useful:
 * [CS12: Intro to Django: GraphQL and Graphene](https://www.youtube.com/watch?v=0qsOwWTo2wc)
 * [CS12: Intro to Django: REST and Users](https://www.youtube.com/watch?v=yMGUq3i1qBY)
 * [CS12: Intro to Django: Token Auth, GraphQL Mutations](https://www.youtube.com/watch?v=_8nTE2NE5tg)
-* [The official documentation](https://docs.djangoproject.com/en/2.2/intro/) 
+* [The official documentation](https://docs.djangoproject.com/en/2.2/intro/)
 
 #### 2. Deploy a LambdaMUD server using Django
 
-Check out this repo for guidelines:
-
-https://github.com/LambdaSchool/LambdaMUD-Project
+* Use the [sprint challenge instructions for Intro to Django](https://github.com/LambdaSchool/Sprint-Challenge--Django-I).
+* Add environment variables to heroku using `heroku config:set KEY=VALUE`
+  * It is recommended that if you are having trouble (e.g. 500 server errors) to set
+    ```
+    DEBUG=TRUE
+    ```
+    to get more information.
+* Run the code in create_world.py on your heroku server (`heroku run python manage.py shell`)
 
 You can consider Pusher websocket integration to be a stretch goal. Your server should interact with your team's client.
 
 #### 3. Create an interesting world on the server
 
-To create your world, you will need to [add rooms](https://github.com/LambdaSchool/LambdaMUD-Project/blob/master/util/create_world.py) to your server. You will need to create more rooms and descriptions to build a unique, traversable world that your client apps can interact with via REST API calls.
+To create your world, you will need to [add rooms](https://github.com/LambdaSchool/CS-Build-Week-1/blob/master/util/create_world.py) to your server. You will need to create more rooms and descriptions to build a unique, traversable world that your client apps can interact with via REST API calls.
+
+Your world should contain a MINIMUM of 100 connected rooms.
 
 You will also need to implement a GET `rooms` API endpoint for clients to fetch all rooms to display a map on the frontend.
 
@@ -46,11 +56,11 @@ You will also need to implement a GET `rooms` API endpoint for clients to fetch 
 
 More on Pusher below.
 
-### Frontend
+### Client
 
 #### 1. Deploy a LambdaMUD client that connects to the test server
 
-While your backend developers are implementing your production server, you may test your endpoints on the test server hosted at `https://lambda-mud-test.herokuapp.com/`. You can use this to test your interface for account registration, login, and movement throughout the world. (See [documentation](https://github.com/LambdaSchool/LambdaMUD-Project) for details.) Your app should store the user's auth token upon successful registration/authentication and use it to authenticate subsequent API requests.
+While your backend developers are implementing your production server, you may test your endpoints on the test server hosted at `https://lambda-mud-test.herokuapp.com/`. You can use this to test your interface for account registration, login, movement and map display. (See sample API commands below.) Your app should store the user's auth token upon successful registration/authentication and use it to authenticate subsequent API requests.
 
 #### 2. Connect your LambdaMUD client to the production server
 
@@ -60,14 +70,14 @@ Once your backend is up and running, you should be able to swap out the test hos
 
 Your backend should implement a `rooms` endpoint which will return data for every room in your world. Your job will be to build a map to display a map of those rooms, along with relevant information, like marking which room the player is currently in.
 
-#### 4. STRETCH: Implement client "hearing" (Brady walks in from the north) and chat using the Pusher websocket library
+#### 4. STRETCH: Implement client "hearing" (Brady walks in from the north) and chat using the Pusher websocket library.
 
 More on Pusher below.
 
 
 ## API Requirements
 
-These are implemented on the 
+These are implemented on the test server: `https://lambda-mud-test.herokuapp.com/`.
 
 ### Registration
 * `curl -X POST -H "Content-Type: application/json" -d '{"username":"testuser", "password1":"testpassword", "password2":"testpassword"}' localhost:8000/api/registration/`
@@ -152,9 +162,17 @@ Note that all the Pusher parts are stretch.
 
 ### 1. Can you show me an example of a map visualization?
 
-Here's a sample project created by CS16 SL [Ryan Walker](http://ryanwalker.dev):
+Here's a sample project created by [a team in CSPT2](https://confident-wright-ca0176.netlify.com): 
 
-![Lambda Treasure Hunt](img/treasure-hunt-1.png)
+![Lambda MUD 1](img/pt2_lambdamud.png)
+
+And here's [a FT team](https://lambdaschool.com/lab-demos/lambda-mud) that went above and beyond with their use of graphics:
+
+![Lambda MUD 2](img/ex_lambdamud.png)
+
+And here's an example on iOS:
+
+![Lambda MUD Mobile](img/ios_lambdamud.jpg)
 
 ### 2. How do I build something like that?
 
