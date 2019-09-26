@@ -27,7 +27,7 @@ class World:
     y = 0
     room_count = 0
     # Start generating rooms to the east
-    direction = -1  # 1: east, -1: west
+    direction = 1  # 1: east, -1: west
     # While there are rooms to be created...
     previous_room = None
     while room_count < num_rooms:
@@ -43,23 +43,23 @@ class World:
         room_direction = "n"
         y += 1
         direction *= -1
-        # Create a room in the given direction
-        room = Room(title="Treasure Chamber", description="""You've found the long-lost treasure chamber! Sadly, it has already been completely emptied by earlier adventurers. The only exit is to the south.""", x=x, y=y)
-        # Save the room in the World grid
-        print("last line???????")
-        print(f"max y: {len(self.grid)}, max x: {len(self.grid[0])}")
-        print(f"x: {x}, y: {y}")
-        self.grid[y][x] = room
-        # Save the room to the db
-        room.save()
-        print(room_count)
-        # Connect the new room to the previous room
-        if previous_room is not None:
-          print(f"conn prev:{previous_room.id} curr:{room.id} dir:{room_direction}")
-          previous_room.connectRooms(room, room_direction)
-        # Update iteration variables
-        previous_room = room
-        room_count += 1
+      # Create a room in the given direction
+      room = Room(title="Treasure Chamber", description="""You've found the long-lost treasure chamber! Sadly, it has already been completely emptied by earlier adventurers. The only exit is to the south.""", x=x, y=y)
+      # Save the room in the World grid
+      print("last line???????")
+      print(f"max y: {len(self.grid)}, max x: {len(self.grid[0])}")
+      print(f"x: {x}, y: {y}")
+      self.grid[y][x] = room
+      # Save the room to the db
+      room.save()
+      print(room_count)
+      # Connect the new room to the previous room
+      if previous_room is not None:
+        print(f"conn prev:{previous_room.id} curr:{room.id} dir:{room_direction}")
+        previous_room.connectRooms(room, room_direction)
+      # Update iteration variables
+      previous_room = room
+      room_count += 1
   def print_rooms(self):
     '''
     Print the rooms in room_grid in ascii characters.
@@ -105,15 +105,15 @@ class World:
         else:
           str += "     "
       str += "#\n"
-      # Add bottom border
-      str += "# " * ((3 + self.width * 5) // 2) + "\n"
-      # Print string
-      print(str)
+    # Add bottom border
+    str += "# " * ((3 + self.width * 5) // 2) + "\n"
+    # Print string
+    print(str)
 
 
 # instantiate a World, generate some rooms
 w = World()
-num_rooms = 20
+num_rooms = 101
 width = 10
 height = 100
 w.generate_rooms(width, height, num_rooms)
