@@ -7,12 +7,13 @@ from django.contrib.auth.models import User
 from .models import *
 from rest_framework.decorators import api_view
 import json
+import queue
 
 # instantiate pusher
 # pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
 
 
-@csrf_exempt
+# @csrf_exempt
 @api_view(["GET"])
 def initialize(request):
     user = request.user
@@ -29,12 +30,32 @@ def initialize(request):
 def room_view(request):
     user = request.user
     player = user.player
-    player_id = player.id
-    uuid = player.uuid
     room = player.room()
-    players = room.playerNames(player_id)
+    # BFS starting with player's current room, developing coordinates
+    # TODO only do this once for each create_world
+    x = 0
+    y = 0
+    q = queue.Queue()
+    rooms_graph = {}
+    q.put([room, x, y])
+    while not q.empty():
+        q_item = q.get()
+        current_room = q_item[0]
+        # print(current_room.id)
+        x = q_item[1]
+        y = q_item[2]
+        rooms_graph[current_room.id] = [x, y]
+        if current_room.n_to and current_room.n_to not in rooms_graph:
+            q.put([Room.objects.get(id=current_room.n_to), x, y + 1])
+        if current_room.e_to and current_room.e_to not in rooms_graph:
+            q.put([Room.objects.get(id=current_room.e_to), x + 1, y])
+        if current_room.s_to and current_room.s_to not in rooms_graph:
+            q.put([Room.objects.get(id=current_room.s_to), x, y - 1])
+        if current_room.w_to and current_room.w_to not in rooms_graph:
+            q.put([Room.objects.get(id=current_room.w_to), x - 1, y])
+    # print(rooms_graph)
 
-    return JsonResponse({"username": player.user.username, "room": room.title})
+    return JsonResponse({"username": player.user.username, "roomsGraph": rooms_graph})
 
 
 # @csrf_exempt
@@ -74,7 +95,7 @@ def move(request):
         return JsonResponse({'name': player.user.username, 'title': room.title, 'description': room.description, 'players': players, 'error_msg': "You cannot move that way."}, safe=True)
 
 
-@csrf_exempt
+# @csrf_exempt
 @api_view(["POST"])
 def say(request):
     # IMPLEMENT
