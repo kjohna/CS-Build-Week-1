@@ -27,7 +27,7 @@ class World:
     # Create room at center of grid, push to queue
     x = size_x // 2
     y = size_y // 2
-    curr_room = Room(id=0, title="Treasure Chamber", description="""You've found the long-lost treasure chamber! Sadly, it has already been completely emptied by earlier adventurers. The only exit is to the south.""", x=x, y=y)
+    curr_room = Room(id=1, title="Treasure Chamber", description="""You've found the long-lost treasure chamber! Sadly, it has already been completely emptied by earlier adventurers. The only exit is to the south.""", x=x, y=y)
     self.grid[y][x] = curr_room
     curr_room.save()
     q = deque([(x, y)])
@@ -35,8 +35,8 @@ class World:
     room_count = 1
     while room_count < num_rooms:
       curr_loc = q.popleft()
-      print("HERHERHER")
-      print(curr_loc)
+      # print("HERHERHER")
+      # print(curr_loc)
       x = curr_loc[0]
       y = curr_loc[1]
       curr_room = self.grid[y][x]
@@ -47,6 +47,11 @@ class World:
           if self.prob_add_room(x, y + 1, room_count):
             q.append((x, y + 1))
             curr_room.connectRooms(self.grid[y + 1][x], 'n')
+            print("n connection")
+            print(f"current: {self.grid[y][x].id}")
+            print(f"curr n_to: {self.grid[y][x].n_to}")
+            print(f"n_to: {self.grid[y+1][x].id}")
+            print(f"n_to s_to: {self.grid[y+1][x].s_to}")
             room_count += 1
       # s_to
       if y > 0:
@@ -75,7 +80,7 @@ class World:
       self.grid[y][x] = new_room
       new_room.save()
       return True
-    return False      
+    return False
   def print_rooms(self):
     '''
     Print the rooms in room_grid in ascii characters.
@@ -128,10 +133,10 @@ class World:
 
 
 # instantiate a World, generate some rooms
-w = World(0.55)
-num_rooms = 300
-width = 25
-height = 25
+w = World(0.65)
+num_rooms = 4
+width = 5
+height = 5
 w.generate_rooms(width, height, num_rooms)
 w.print_rooms()
 

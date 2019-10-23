@@ -10,15 +10,16 @@ class Room(models.Model):
     title = models.CharField(max_length=50, default="DEFAULT TITLE")
     description = models.CharField(
         max_length=500, default="DEFAULT DESCRIPTION")
-    n_to = models.IntegerField(default=0)
-    s_to = models.IntegerField(default=0)
-    e_to = models.IntegerField(default=0)
-    w_to = models.IntegerField(default=0)
+    n_to = models.IntegerField(blank=True, null=True)
+    s_to = models.IntegerField(blank=True, null=True)
+    e_to = models.IntegerField(blank=True, null=True)
+    w_to = models.IntegerField(blank=True, null=True)
     x = models.IntegerField(default=0)
     y = models.IntegerField(default=0)
 
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
+        print(f"connect dest: {destinationRoomID} to self: {self.id} dir: {direction}")
         try:
             destinationRoom = Room.objects.get(id=destinationRoomID)
         except Room.DoesNotExist:
@@ -26,16 +27,25 @@ class Room(models.Model):
         else:
             if direction == "n":
                 self.n_to = destinationRoomID
+                destinationRoom.s_to = self.id
+                print(f"connect {self.id} to {direction} neighbor")
             elif direction == "s":
                 self.s_to = destinationRoomID
+                destinationRoom.n_to = self.id
+                print(f"connect {self.id} to {direction} neighbor")
             elif direction == "e":
                 self.e_to = destinationRoomID
+                destinationRoom.w_to = self.id
+                print(f"connect {self.id} to {direction} neighbor")
             elif direction == "w":
                 self.w_to = destinationRoomID
+                destinationRoom.e_to = self.id
+                print(f"connect {self.id} to {direction} neighbor")
             else:
                 print("Invalid direction")
                 return
             self.save()
+            destinationRoom.save()
 
     def playerNames(self, currentPlayerID):
         return [p.user.username for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
