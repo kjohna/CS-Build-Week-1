@@ -101,6 +101,20 @@ def move(request):
         #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has entered from the {reverse_dirs[direction]}.'})
         # get room exits
         exits = []
+        if nextRoom.n_to:
+            exits.append('n')
+        if nextRoom.s_to:
+            exits.append('s')
+        if nextRoom.e_to:
+            exits.append('e')
+        if nextRoom.w_to:
+            exits.append('w')
+        return JsonResponse({'uuid': player_uuid, 'name': player.user.username, 'title': nextRoom.title, 'description': nextRoom.description, 'players': players, 'exits': exits}, safe=True)
+        # return JsonResponse({'name': player.user.username, 'title': nextRoom.title, 'description': nextRoom.description, 'players': players, 'exits': exits, 'error_msg': ""}, safe=True)
+    else:
+        players = room.playerNames(player_id)
+        # get room exits
+        exits = []
         if room.n_to:
             exits.append('n')
         if room.s_to:
@@ -109,11 +123,7 @@ def move(request):
             exits.append('e')
         if room.w_to:
             exits.append('w')
-        return JsonResponse({'uuid': uuid, 'name': player.user.username, 'title': room.title, 'description': room.description, 'players': players, 'exits': exits}, safe=True)
-        return JsonResponse({'name': player.user.username, 'title': nextRoom.title, 'description': nextRoom.description, 'players': players, 'exits': exits, 'error_msg': ""}, safe=True)
-    else:
-        players = room.playerNames(player_id)
-        return JsonResponse({'name': player.user.username, 'title': room.title, 'description': room.description, 'players': players, 'exits': exits, 'error_msg': "You cannot move that way."}, safe=True)
+        return JsonResponse({'uuid': player_uuid, 'name': player.user.username, 'title': room.title, 'description': room.description, 'players': players, 'exits': exits, 'error_msg': "You cannot move that way."}, safe=True)
 
 
 # @csrf_exempt
