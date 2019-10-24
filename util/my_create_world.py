@@ -32,7 +32,7 @@ class World:
     curr_room.save()
     q = deque([(x, y)])
     # Create rooms until num_rooms created
-    room_count = 1
+    room_count = 2
     while room_count < num_rooms:
       curr_loc = q.popleft()
       # print("HERHERHER")
@@ -46,7 +46,9 @@ class World:
         if not self.grid[y + 1][x]:
           if self.prob_add_room(x, y + 1, room_count):
             q.append((x, y + 1))
+            # for whatever reason need to run connect rooms for each direction...not saving properly if trying to do destinationRoom.save()
             curr_room.connectRooms(self.grid[y + 1][x], 'n')
+            self.grid[y + 1][x].connectRooms(curr_room, 's')
             print("n connection")
             print(f"current: {self.grid[y][x].id}")
             print(f"curr n_to: {self.grid[y][x].n_to}")
@@ -59,6 +61,7 @@ class World:
           if self.prob_add_room(x, y - 1, room_count):
             q.append((x, y - 1))
             curr_room.connectRooms(self.grid[y - 1][x], 's')
+            self.grid[y - 1][x].connectRooms(curr_room, 'n')
             room_count += 1
       # e_to
       if x < (size_x - 2):
@@ -66,6 +69,7 @@ class World:
           if self.prob_add_room(x + 1, y, room_count):
             q.append((x + 1, y))
             curr_room.connectRooms(self.grid[y][x + 1], 'e')
+            self.grid[y][x + 1].connectRooms(curr_room, 'w')
             room_count += 1
       # w_to
       if x > 0:
@@ -73,12 +77,13 @@ class World:
           if self.prob_add_room(x - 1, y, room_count):
             q.append((x - 1, y))
             curr_room.connectRooms(self.grid[y][x - 1], 'w')
+            self.grid[y][x - 1].connectRooms(curr_room, 'e')
             room_count += 1  
   def prob_add_room(self, x, y, room_count):
     if random.random() < self.room_prob:
-      new_room = Room(title="Room", description="room desc.")
-      self.grid[y][x] = new_room
+      new_room = Room(id=room_count, title="Room", description="room desc.")
       new_room.save()
+      self.grid[y][x] = new_room
       return True
     return False
   def print_rooms(self):
@@ -134,9 +139,12 @@ class World:
 
 # instantiate a World, generate some rooms
 w = World(0.65)
-num_rooms = 4
-width = 5
-height = 5
+# num_rooms = 500
+# width = 25
+# height = 25
+num_rooms = 10
+width = 10
+height = 10
 w.generate_rooms(width, height, num_rooms)
 w.print_rooms()
 

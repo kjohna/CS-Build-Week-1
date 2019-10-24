@@ -19,7 +19,8 @@ class Room(models.Model):
 
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
-        print(f"connect dest: {destinationRoomID} to self: {self.id} dir: {direction}")
+        print(
+            f"connect dest: {destinationRoomID} to self: {self.id} dir: {direction}")
         try:
             destinationRoom = Room.objects.get(id=destinationRoomID)
         except Room.DoesNotExist:
@@ -28,7 +29,9 @@ class Room(models.Model):
             if direction == "n":
                 self.n_to = destinationRoomID
                 destinationRoom.s_to = self.id
-                print(f"connect {self.id} to {direction} neighbor")
+                print(f"connect {self.id} to {direction} neighbor {self.n_to}")
+                print(f"self.n_to = {self.n_to}")
+                print(f"destinationRoom.s_to = {destinationRoom.s_to}")
             elif direction == "s":
                 self.s_to = destinationRoomID
                 destinationRoom.n_to = self.id
@@ -45,7 +48,9 @@ class Room(models.Model):
                 print("Invalid direction")
                 return
             self.save()
-            destinationRoom.save()
+            # can't save destination room this way? best to run connect rooms in both directions.
+            # destinationRoom.save()
+            print("rooms saved")
 
     def playerNames(self, currentPlayerID):
         return [p.user.username for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
